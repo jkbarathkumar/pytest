@@ -18,7 +18,7 @@ pipeline{
     }
     stage('Run Tests with Coverage'){
       steps{
-       sh 'PYTHONPATH=app ./venv/bin/pytest -v test/coverage.py --cov=app --cov-report=xml --cov-report=html'
+      sh 'cd test && PYTHONPATH=../app ../$VENV_DIR/bin/pytest -v coverage.py --cov=app --cov-report=xml --cov-report=html'
       }
     }
     stage('Publish Coverage Report'){
