@@ -1,39 +1,39 @@
-pipeline{
-  agent any
-  environment{
-    VENV_DIR='venv'
-  }
-  stages{
-    stage('Checkout'){
-      steps{
-        checkout scm
-      }
+pipeline {
+    agent any
+    environment {
+        VENV_DIR = 'venv'
     }
-    stage('Set Up Virtual Environment'){
-      steps{
-        sh 'python3 -m venv $VENV_DIR'
-        sh './$VENV_DIR/bin/pip install --upgrade pip'
-        sh './$VENV_DIR/bin/pip install -r requirements.txt'
-      }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Set Up Virtual Environment') {
+            steps {
+                sh 'python3 -m venv $VENV_DIR'
+                sh './$VENV_DIR/bin/pip install --upgrade pip'
+                sh './$VENV_DIR/bin/pip install -r requirements.txt'
+            }
+        }
+        stage('Run Tests with Coverage') {
+            steps {
+                sh './$VENV_DIR/bin/pytest test/coverage.py --cov=app --cov-report=xml --cov-report=html'
+            }
+        }
+        stage('Publish Coverage Report') {
+            steps {
+                publishHTML(target: [
+                    reportDir: 'htmlcov',
+                    reportFiles: 'index.html',
+                    reportName: 'HTML Coverage Report'
+                ])
+            }
+        }
     }
-    stage('Run Tests with Coverage'){
-      steps{
-      sh 'cd test && PYTHONPATH=../app ../$VENV_DIR/bin/pytest -v coverage.py --cov=app --cov-report=xml --cov-report=html'
-      }
+    post {
+        always {
+            archiveArtifacts artifacts: 'coverage.xml', fingerprint: true
+        }
     }
-    stage('Publish Coverage Report'){
-      steps{
-        publishHTML(target:[
-          reportDir:'htmlcov',
-          reportFiles:'index.html',
-          reportName:'HTML Coverage Report'
-        ])
-      }
-    }
-  }
-  post{
-    always{
-      archiveArtifacts artifacts:'coverage.xml', fingerprint:true
-    }
-  }
 }
