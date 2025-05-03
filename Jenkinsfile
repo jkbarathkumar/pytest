@@ -18,7 +18,7 @@ pipeline{
     }
     stage('Run Tests with Coverage'){
       steps{
-        sh './$VENV_DIR/bin/pytest -v src/tests --cov=app --cov-report=xml --cov-report=html'
+        sh './$VENV_DIR/bin/pytest -v src/test --cov=app --cov-report=xml --cov-report=html'
       }
     }
     stage('Publish Coverage Report'){
