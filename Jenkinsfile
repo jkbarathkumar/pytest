@@ -18,7 +18,7 @@ pipeline {
     }
     stage('Run Tests with Coverage') {
       steps {
-        sh './$VENV_DIR/bin/pytest --cov=app --cov-report=xml --cov-report=html'
+        sh './$VENV_DIR/bin/pytest -v tests --cov=app --cov-report=xml --cov-report=html'
       }
     }
     stage('Publish Coverage Report') {
@@ -36,6 +36,4 @@ pipeline {
       archiveArtifacts artifacts: 'coverage.xml', fingerprint: true
     }
   }
-
 }
-
